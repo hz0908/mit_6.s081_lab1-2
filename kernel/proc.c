@@ -214,6 +214,9 @@ userinit(void)
   struct proc *p;
 
   p = allocproc();
+
+  /*add init here*/
+  p->trapframe->trace_id=0;
   initproc = p;
   
   // allocate one user page and copy init's instructions
@@ -277,6 +280,9 @@ fork(void)
 
   np->parent = p;
 
+  /*add copy for trace*/
+  np->trapframe->trace_id=p->trapframe->trace_id;
+  
   // copy saved user registers.
   *(np->trapframe) = *(p->trapframe);
 
@@ -692,4 +698,20 @@ procdump(void)
     printf("%d %s %s", p->pid, state, p->name);
     printf("\n");
   }
+}
+
+
+
+//get proc count
+int get_proc_count(void)
+{
+  struct proc *p;
+  int count=0;
+  for(p = proc; p < &proc[NPROC]; p++) {
+    
+    if(p->state != UNUSED) {
+      count++;
+    } 
+  }
+  return count;
 }
